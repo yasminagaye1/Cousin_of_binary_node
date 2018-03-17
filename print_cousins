@@ -1,0 +1,104 @@
+#include<iostream>
+
+using namespace std;
+
+struct binaryTreeNode
+{
+	int info;
+	binaryTreeNode *llink;
+	binaryTreeNode *rlink;
+};
+void insert(binaryTreeNode *&root, int& insertItem); //insert and element in the tree
+void findLevel(binaryTreeNode *&root, binaryTreeNode *node, int index, int &level); //find the level of the node
+void Cousin(binaryTreeNode *&root, binaryTreeNode *node, int level);//print the cousins
+
+int main()
+{
+	int num;
+	int i;
+	binaryTreeNode *root = NULL;
+	int level = 0, index = 1;
+
+	for (i = 0; i<14; i++)
+	{
+		cout << "Enter a #: ";
+		cin >> num;
+		insert(root, num);
+	}
+	cout << endl;
+	findLevel(root, root->llink->llink->llink, index, level);
+	cout << "The cousin of " << num << endl;
+	Cousin(root, root->llink->llink->llink, level);
+
+	system("pause");
+	return 0;
+}
+void findLevel(binaryTreeNode *&root, binaryTreeNode *node, int index, int &level)
+{
+	if (root == NULL || level)
+		return;
+	if (root == node)
+		level = index;
+	else
+	{
+		findLevel(root->llink, node, index + 1, level);
+		findLevel(root->rlink, node, index + 1, level);
+	}
+}
+void Cousin(binaryTreeNode *&root, binaryTreeNode *node, int level)
+{
+	if (root == NULL)
+		return;
+	if (level == 1)
+	{
+		cout << root->info << " ";
+		return;
+	}
+	if (root->rlink && root->llink != node && root->rlink && root->rlink != node)
+	{
+		Cousin(root->llink, node, level - 1);
+		Cousin(root->rlink, node, level - 1);
+	}
+	
+}
+//Insert an element in a binary tree
+void insert(binaryTreeNode *&root, int& insertItem)
+{
+	binaryTreeNode *current;
+	binaryTreeNode *trailCurrent;
+	binaryTreeNode *newNode;
+
+	newNode = new binaryTreeNode;
+	//assert(newNode!=NULL);
+	newNode->info = insertItem;
+	newNode->llink = NULL;
+	newNode->rlink = NULL;
+
+	if (root == NULL)
+		root = newNode;
+	else
+	{
+		current = root;
+		trailCurrent = current;
+
+		while (current != NULL)
+		{
+			trailCurrent = current;
+
+			if (current->info == insertItem)
+			{
+				cerr << "The insert item is already in the tree, no duplicates " << insertItem << endl;
+				return;
+			}
+			else if (current->info>insertItem)
+				current = current->llink;
+			else
+				current = current->rlink;
+		}//end while
+
+		if (trailCurrent->info>insertItem)
+			trailCurrent->llink = newNode;
+		else
+			trailCurrent->rlink = newNode;
+	}//end else
+}//end insert
